@@ -14,7 +14,7 @@ configuration {
     display-drun:                   "";
     // The display name of this browser
     display-window:                 "";
-    display-combi:                  "Go to";
+    display-combi:                  "Go to: ";
     show-icons: true;
 }
 
