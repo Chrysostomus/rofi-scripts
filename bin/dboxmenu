@@ -29,7 +29,7 @@ THEME="	#window {
 		fixed-height: false;
 		lines: $MAX_LINES;
 		dynamic: true;}"
-ALL_CAT=" Applications"
+ALL_CAT=" Applications"
 TITLE="Menu:"
 
 # new line separated list
@@ -39,7 +39,6 @@ Development
 Documentation
 Education
 System
-Network
 Utility
 Graphics
 Office
@@ -53,7 +52,7 @@ present=$(grep Categories /usr/share/applications/*.desktop \
 	| sed 's/;/\n/g' \
 	| LC_COLLATE=POSIX sort --ignore-case --unique \
 	| grep "$desired" -F -x - \
-	| sed -e 's/Settings/ Settings/g' -e 's/Development/ Development/g' -e 's/AudioVideo/ AudioVideo/g' -e 's/Documentation/ Documentation/g' -e 's/Office/ Office/g' -e 's/System/漣 System/g' -e 's/Utility/ Utility/g' -e 's/Accessories/ Accessories/g' -e 's/Multimedia/ Multimedia/g' -e 's/Education/拾 Education/g' -e 's/Internet/ Internet/g' -e 's/Graphics/ Graphics/g' -e 's/Network/ Network/g')
+	| sed -e 's/Settings/ Settings/g' -e 's/Development/ Development/g' -e 's/AudioVideo/ AudioVideo/g' -e 's/Documentation/ Documentation/g' -e 's/Office/ Office/g' -e 's/System/ System/g' -e 's/Utility/ Utility/g' -e 's/Accessories/ Accessories/g' -e 's/Multimedia/ Multimedia/g' -e 's/Education/ Education/g' -e 's/Internet/ Internet/g' -e 's/Graphics/ Graphics/g')
 
 menulist=" Terminal
  Filemanager
