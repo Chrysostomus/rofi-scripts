@@ -227,6 +227,7 @@ activate_category() {	# shows drun modi filtered with category. If no command se
 				-display-drun "$label" \
 				-filter "$category " \
 				-run-command "echo {cmd}" \
+				-run-shell-command "echo {terminal} -e {cmd}" \
 				-theme-str "$theme")
 	if [ -n "$command" ] ; then
 		eval "$command" &
