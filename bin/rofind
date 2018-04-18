@@ -3,7 +3,7 @@
 # Requires: dmenu, xdg-utils 
 # To be used as a custom rofi mode. Example: rofi -show :rofind -modi :rofind
 if [ -z "$@" ]; then
-	find -not -path '*/\.*' 2> /dev/null
+	coproc (find -not -path '*/\.*' 2> /dev/null)
 else
 	case "$(echo $@ | cut -d " " -f 1)" in
 		a)
