@@ -3,16 +3,19 @@
 # Requires: rofi, xdg-utils, nerdfonts
 files=/tmp/.file_list
 
+update_list() {
+	find \( ! -regex '.*/\..*' \) -type d -not -path '*/\.*' 2> /dev/null | sed -e 's/^\./:~/g' > /tmp/.file_list
+	find \( ! -regex '.*/\..*' \) -not -type d 2> /dev/null | sed -E -e '/png$|jpg$|tiff$|gif$|jpeg$|bmp$/ s/^\./:~/g' -e '/mp3$|pcm$|wav$|aac$|ogg$|wma$/ s/^\./~/g' -e '/wmv$|webm$|m4v$|mkv$|mov$|flv$|avi$|mp4$/ s/^\./辶:~/g' -e 's/^\./:~/g' >> /tmp/.file_list
+	find .config 2> /dev/null | sed -E -e 's/^\./:~\/./g' >> /tmp/.file_list
+}
 if [ -e $files ]; then
 	# File list exist, use it
 	input=$(cat $files | rofi -dmenu -p )
 	# Update the list on the background
-	find \( ! -regex '.*/\..*' \) -type d -not -path '*/\.*' 2> /dev/null | sed -e 's/^\./:~/g' > /tmp/.file_list &
-	find \( ! -regex '.*/\..*' \) -not -type d 2> /dev/null | sed -E -e '/png$|jpg$|tiff$|gif$|jpeg$|bmp$/ s/^\./:~/g' -e '/mp3$|pcm$|wav$|aac$|ogg$|wma$/ s/^\./~/g' -e '/wmv$|webm$|m4v$|mkv$|mov$|flv$|avi$|mp4$/ s/^\./辶:~/g' -e 's/^\./:~/g' >> /tmp/.file_list & 
-else
+	update_list 
+	else
 	# There is no file list, create it and show menu only after that
-	find \( ! -regex '.*/\..*' \) -type d -not -path '*/\.*' 2> /dev/null | sed -e 's/^\./:~/g' > /tmp/.file_list
-	find \( ! -regex '.*/\..*' \) -not -type d 2> /dev/null | sed -E -e '/png$|jpg$|tiff$|gif$|jpeg$|bmp$/ s/^\./:~/g' -e '/mp3$|pcm$|wav$|aac$|ogg$|wma$/ s/^\./~/g' -e '/wmv$|webm$|m4v$|mkv$|mov$|flv$|avi$|mp4$/ s/^\./辶:~/g' -e 's/^\./:~/g' >> /tmp/.file_list
+	update_list
 	input=$(cat $files | rofi -dmenu -p )
 fi
 	case "$(echo $input | cut -d " " -f 1)" in
