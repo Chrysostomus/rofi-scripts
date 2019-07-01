@@ -159,7 +159,7 @@ DT_THEME="
 	width:		${DT_WIDTH}px;
 	children:	[ dt-mainbox ];
 }
-#sidebar {
+#mode-switcher {
 	enabled:	false;
 }
 #button {
@@ -212,7 +212,7 @@ activate_category() {	# shows drun modi filtered with category. If no command se
 			#window {
 				width:		$((${DT_WIDTH}*2));
 			}
-			#sidebar {
+			#mode-switcher {
 				enabled:	true;
 			}
 			#boxdummy {
@@ -372,7 +372,7 @@ window {
 //submenu-style
 sb-mainbox {
 	orientation:	horizontal;
-	children:		[ sidebar, vertibox ];
+	children:		[ mode-switcher, vertibox ];
 }
 //tabs-style
 tb-mainbox {
@@ -387,9 +387,9 @@ dt-mainbox {
 }
 horibox {
 	orientation:	horizontal;
-	children:		[ listview, sidebar ];
+	children:		[ listview, mode-switcher ];
 }
-sidebar {
+mode-switcher {
 	orientation:	vertical;
 }
 button {
