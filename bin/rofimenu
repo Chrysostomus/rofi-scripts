@@ -33,81 +33,79 @@ if ! [ -f "$ROFIMENU_CONFIG" ] ; then
 # Menu functions from this script can be used as modi like this "<menu_name>:$thisscript -menu <menu_function>"
 
 # pause needed for smooth transition when menu command refers to other modi
-DELAY=0.06
+DELAY=0.1
 delay() {
 	sleep $DELAY
 }
 
 # define modi labels for menu
 
-FAV=" Favourites"
-DRUN=" Applications"
-CAT=" Categories"
-RUN=" Run"
-MENU=" Edit Menu"
-EXIT=" Exit"
+FAV="  Favourites"
+DRUN="  Applications"
+CAT="  Categories"
+RUN="  Run"
+MENU="  Edit Menu"
+EXIT="  Exit"
 
 modilist="\
-$FAV:$thisscript -menu ${FAV#* },\
+$FAV:$thisscript -menu Favourites,\
 drun,\
-$CAT:$thisscript -menu ${CAT#* },\
+$CAT:$thisscript -menu Categories,\
 run,\
 $MENU:$thisscript -menu Menu_settings,\
-$EXIT:$thisscript -menu ${EXIT#* }"
+$EXIT:$thisscript -menu Exit"
 
-# Menu functions print lines in format "label:command".
+# Menu functions print lines in format "[icon!]label:command".
 
 Menu_settings() {
-	echo " Edit config:$GUI_EDITOR $ROFIMENU_CONFIG && $thisscript -show \'$MENU\'"
-	echo " Reset config:rm $ROFIMENU_CONFIG && delay; $thisscript -show \'$MENU\'"
+	echo "preferences-other-symbolic!Edit config:$GUI_EDITOR $ROFIMENU_CONFIG && $thisscript -show \'$MENU\'"
+	echo "edit-clear!Reset config:rm $ROFIMENU_CONFIG && delay; $thisscript -show \'$MENU\'"
 	echo "──────────────:true"
-	echo " Edit theme:$GUI_EDITOR $ROFIMENU_THEME && $thisscript -show \'$MENU\'"
-	echo " Reset theme:rm $ROFIMENU_THEME && delay; $thisscript -show \'$MENU\'"
+	echo "preferences-other-symbolic!Edit theme:$GUI_EDITOR $ROFIMENU_THEME && $thisscript -show \'$MENU\'"
+	echo "edit-clear!Reset theme:rm $ROFIMENU_THEME && delay; $thisscript -show \'$MENU\'"
 }
 
 Favourites() {
-	echo " Terminal:default-terminal"
-	echo " File Manager:xdg-open ~"
-	echo " Browser:default-browser"
-	echo " Settings:default-terminal -e bmenu"
-	echo " Search:rofi-finder.sh"
-	# echo "$EXIT: delay; delay; $thisscript -show \'$EXIT\'"		# This refers to modi from the same script; needs delay
+	echo "utilities-terminal!Terminal:default-terminal"
+	echo "system-file-manager!File Manager:xdg-open ~"
+	echo "network-workgroup!Browser:default-browser"
+	echo "preferences-system!Settings:default-terminal -e bmenu"
+	echo "system-search!Search:rofi-finder.sh"
 }
 
 Exit() {
-	echo " lock:screenlock"
-	echo " suspend:systemctl suspend"
-	echo " hibernate:systemctl hibernate"
-	echo " logout:xdotool key --clearmodifiers super+shift+q"
-	echo " reboot:systemctl reboot"
-	echo " poweroff:systemctl poweroff"
+	echo "system-lock-screen-symbolic!lock:screenlock"
+	echo "media-playback-pause-symbolic!suspend:systemctl suspend"
+	echo "weather-clear-night-symbolic!hibernate:systemctl hibernate"
+	echo "system-log-out-symbolic!logout:xdotool key --clearmodifiers super+shift+q"
+	echo "system-reboot-symbolic!reboot:systemctl reboot"
+	echo "system-shutdown-symbolic!poweroff:systemctl poweroff"
 }
 
 Categories() {
 	SUBMENU_MARK=""
 	IFS='
 '
-	# Newline separated list, each line has format "[symbol ][alias:]category"
+	# Newline separated list, each line has format "[icon!][alias:]category"
 	# Category with alias will be shown in menu under that alias
-	# The first entry below is an alias for " " so it shows all applications
 desired="\
- Applications: 
- Favorites
- Accessories:Utility
- Development
- Documentation
- Education
- Graphics
- Internet:Network
- Multimedia:AudioVideo
- Office
- Settings
- System"
+starred!Favorites
+applications-accessories!Accessories:Utility
+applications-development!Development
+system-help!Documentation
+applications-science!Education
+applications-graphics!Graphics
+applications-internet!Internet:Network
+applications-multimedia!Multimedia:AudioVideo
+applications-office!Office
+preferences-system!Settings
+applications-system!System"
 
 	# determine max line length and set tab position for subcategory mark
 	maxlength=0
 	for line in $desired ; do
-		label="${line%:*}"
+		iconandlabel="${line%%:*}"		# text before :
+		label="${iconandlabel##*!}"		# text after !
 		if [ ${#label} -gt $maxlength ] ; then
 			maxlength=${#label}
 		fi
@@ -121,10 +119,12 @@ desired="\
 
 	linenumber=0
 	for line in $desired ; do
-		category="${line##*[ :]}"
-		label="$(echo -e ${line%:*}\\t${SUBMENU_MARK} | expand -t $submenu_tab)"	## add submenu mark
+		category="${line##*[:!]}"		# text after : or !
+		iconandlabel="${line%%:*}"		# text before :
+		icon="${iconandlabel%%!*}"		# text before !
+		label="$(echo -e ${iconandlabel##*!}\\t${SUBMENU_MARK} | expand -t $submenu_tab)"	## add submenu mark
 		if [ $(echo "$present"|grep -w -c "$category") -gt 0 ] ; then
-			echo "$label:activate_category \"$label\" \"$category\" $linenumber"
+			echo "${icon}!${label}:activate_category \"$label\" \"$category\" $linenumber"
 			linenumber=$(($linenumber+1))
 		fi
 	done
@@ -135,17 +135,17 @@ desired="\
 DT_MODI="Desktop:$thisscript -menu Desktop"
 
 Desktop() {
-	echo " Terminal:default-terminal"
-	echo " File Manager:xdg-open ~"
-	echo " Browser:default-browser"
+	echo "utilities-terminal!Terminal:default-terminal"
+	echo "system-file-manager!File Manager:xdg-open ~"
+	echo "network-workgroup!Browser:default-browser"
 	#TODO determine number of lines before categories
 	addlinenumber=3
 	eval $(xdotool search --class rofi getwindowgeometry --shell)
 	Categories|sed "s/\$/ $addlinenumber $X $Y/"	# pass additional lines number, X, Y
-	echo " Search:rofi-finder.sh"
+	echo "system-search!Search:rofi-finder.sh"
 }
 
-DT_WIDTH=200		# pixels
+DT_WIDTH=300		# pixels
 ##TODO determine desktop menu line height according to theme
 DT_LINE_HEIGHT=23	# pixels
 
@@ -234,7 +234,7 @@ activate_category() {	# shows drun modi filtered with category. If no command se
 		exit
 	fi
 	# return to categories modi. No delay needed
-	eval $goback &
+	eval "$goback" &
 	
 	if [ $linenumber -eq 0 ] ; then	# if the category is on the top line
 		exit
@@ -247,6 +247,7 @@ activate_category() {	# shows drun modi filtered with category. If no command se
 		linenumber=$(($linenumber-1))
 	done	
 	##TODO wait until rofi can take input
+	delay
 	delay
 	delay
 	xdotool search --class rofi key --delay 0 $keys
@@ -453,6 +454,7 @@ element-text {
 element-icon {
 	size:				2.5ch;
 }
+
 _EOF_
 fi
 
@@ -529,6 +531,7 @@ case "$option" in
 
 			# the rest of command line is passed to rofi
 	rofi	"$@" \
+			-dpi 0 \
 			-modi "$modilist" \
 			-show "$showmodi" \
 			-config "$ROFIMENU_THEME" \
@@ -547,15 +550,20 @@ case "$option" in
 			1)	# "-menu <menu>" and no more parameters calls <menu> function and prints labels from each line
 				$1 \
 				| while read line; do
-					echo "${line%%:*}"
+					iconandlabel="${line%%:*}"		# text before :
+					icon="${iconandlabel%%!*}"		# text before !
+					label="${iconandlabel##*!}"		# text after !
+					echo -en "${label}\0icon\x1f${icon}\n"
 				  done
 				  exit
 				;;
 			*)	# "-menu <menu> <label>" calls <menu> function and executes command from line with <label>
 				$1 \
 				| while read line; do
-					if [ "$2" = "${line%%:*}" ] ; then
-						command="${line#*:}"
+					iconandlabel="${line%%:*}"		# text before :
+					label="${iconandlabel##*!}"		# text after !
+					if [ "$2" = "${label}" ] ; then
+						command="${line#*:}"		# text after :
 						eval "$command" &
 						exit
 					fi
