@@ -447,6 +447,12 @@ element.selected.urgent {
 	background-color:	@selected-urgent-background;
 	text-color:			@selected-urgent-foreground;
 }
+element-text {
+	highlight:			inherit;
+}
+element-icon {
+	size:				2.5ch;
+}
 _EOF_
 fi
 
