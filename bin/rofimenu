@@ -531,6 +531,7 @@ case "$option" in
 
 			# the rest of command line is passed to rofi
 	rofi	"$@" \
+			-no-default-config \
 			-dpi 0 \
 			-modi "$modilist" \
 			-show "$showmodi" \
